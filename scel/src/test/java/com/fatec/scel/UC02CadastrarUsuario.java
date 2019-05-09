@@ -1,129 +1,45 @@
 package com.fatec.scel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import javax.validation.ConstraintViolationException;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fatec.scel.model.Livro;
+import com.fatec.scel.model.PapelDoUsuario;
 import com.fatec.scel.model.Usuario;
+import com.fatec.scel.model.UsuarioRepository;
 
+import antlr.collections.List;
 
+import java.util.HashSet;
+import java.util.UUID;
+
+import javax.validation.ConstraintViolationException;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@RunWith(SpringRunner.class)
+@DataJpaTest
 public class UC02CadastrarUsuario {
+	@Autowired
+	private UsuarioRepository repository;
 	
-	@Test
-	public void CT01CadastrarUsuarioComDadosValidos() {
-		try {
-			// cenario
-			Usuario umUsuario = new Usuario();
-			// acao
-			umUsuario.setNome("Lucas");
-			umUsuario.setRa("5555");
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
+	private Usuario usuario;
 
-		} catch (RuntimeException e) {
-			// verificacao
-			fail("nao deve falhar");
-		}
-	}
-	
 	@Test
-	public void CT02CadastrarUsuarioComDadosValidos() {
-		try {
-			// cenario
-			Usuario umUsuario = new Usuario();
-			// acao
-			umUsuario.setNome("Lucas");
-			umUsuario.setRa("5555");
-
-		} catch (RuntimeException e) {
-			// verificacao
-			fail("nao deve falhar");
-		}
-	}
-	@Test
-	public void CT03CadastrarUsuarioComDadosValidosNomeBranco() {
-		try {
-			// cenario
-			Usuario umUsuario = new Usuario();
-			// acao
-			umUsuario.setNome("");
-			umUsuario.setRa("5555");
-
-		} catch (RuntimeException e) {
-			// verificacao
-			assertEquals("Nome invalido", e.getMessage());
-		}
-	}
-	@Test
-	public void CT04CadastrarUsuarioComDadosValidosNomeNull() {
-		try {
-			// cenario
-			Usuario umUsuario = new Usuario();
-			// acao
-			umUsuario.setNome(null);
-			umUsuario.setRa("5555");
-
-		} catch (RuntimeException e) {
-			// verificacao
-			assertEquals("Nome invalido", e.getMessage());
-		}
-	}
-	@Test
-	public void CT05CadastrarUsuarioComDadosValidosRABranco() {
-		try {
-			// cenario
-			Usuario umUsuario = new Usuario();
-			// acao
-			umUsuario.setNome("Lucas");
-			umUsuario.setRa("");
-
-		} catch (RuntimeException e) {
-			// verificacao
-			assertEquals("RA invalido", e.getMessage());
-		}
-	}
-	@Test
-	public void CT06CadastrarUsuarioComDadosValidosRANull() {
-		try {
-			// cenario
-			Usuario umUsuario = new Usuario();
-			// acao
-			umUsuario.setNome("Lucas");
-			umUsuario.setRa(null);
-
-		} catch (RuntimeException e) {
-			// verificacao
-			assertEquals("RA invalido", e.getMessage());
-		}
-	}
-	@Test
-	public void CT07CadastrarUsuarioObtemNome() {
-		// cenario
-					Usuario umUsuario= new Usuario();
-		try {
-			// acao
-			umUsuario.setNome("Lucas");
-			umUsuario.setRa("5555");
-		} catch (RuntimeException e) {
-			// verificacao
-			fail("nao deve falhar");
-		}
-		assertEquals("Lucas", umUsuario.getNome());
-	}
-	@Test
-	public void CT08CadastrarUsuarioObtemRA() {
-		// cenario
-					Usuario umUsuario= new Usuario();
-		try {
-			// acao
-			umUsuario.setNome("Lucas");
-			umUsuario.setRa("5555");
-		} catch (RuntimeException e) {
-			// verificacao
-			fail("nao deve falhar");
-		}
-		assertEquals("5555", umUsuario.getRa());
+	public void testStoreUser() {
+		HashSet<PapelDoUsuario> papel = new HashSet<>();
+		papel.add(PapelDoUsuario.PROFESSOR);
+		repository.save(new Usuario(UUID.randomUUID(), "prof.edsonalmeida@fatec.sp.br", "pwd", papel));
+		assertThat(repository.count()).isEqualTo(1L);
 	}
 	
-
 }
